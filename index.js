@@ -46,11 +46,15 @@ class Chatbot {
     connect(address = "wss://bot.gosuslugi.ru/api/v2/ws/socket.io/?EIO=4&transport=websocket") {
         if (!this.ws) {
             this.ws = new WebSocket(address);
-            this.ws.on('message', data => this._processIncoming(data.toString()))
-            return;
+            this.ws.on('message', data => this._processIncoming(data.toString()));
+            this.ws.on('close', close);
         }
     }
     
+    close() {
+        if (this.ws.readyState !== WebSocket.CLOSED && this.ws.readyState !== WebSocket.CLOSING) this.ws.close();
+        this.ws = undefined;
+    }
 }
 
 exports.Chatbot = Chatbot;
