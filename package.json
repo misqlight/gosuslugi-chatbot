@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/misqlight/gosuslugi-chatbot/issues"
   },
-  "homepage": "https://github.com/misqlight/gosuslugi-chatbot#readme"
+  "homepage": "https://github.com/misqlight/gosuslugi-chatbot#readme",
+  "dependencies": {
+    "ws": "^8.13.0"
+  }
 }
