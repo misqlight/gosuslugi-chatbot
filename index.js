@@ -1,4 +1,5 @@
 const http = require('https');
+const WebSocket = require('ws');
 
 function generateString(length, symbols = '0123456789abcdef') {
     let result = '';
@@ -8,6 +9,7 @@ function generateString(length, symbols = '0123456789abcdef') {
 }
 
 class Chatbot {
+    ws;
     token;
 
     async _init(sessionId, platform = "epgu_desc") {
@@ -36,6 +38,19 @@ class Chatbot {
             request.end();
         });
     }
+
+    _processIncoming(msg) {
+        // TODO
+    }
+
+    connect(address = "wss://bot.gosuslugi.ru/api/v2/ws/socket.io/?EIO=4&transport=websocket") {
+        if (!this.ws) {
+            this.ws = new WebSocket(address);
+            this.ws.on('message', data => this._processIncoming(data.toString()))
+            return;
+        }
+    }
+    
 }
 
 exports.Chatbot = Chatbot;
