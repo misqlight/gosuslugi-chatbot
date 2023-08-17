@@ -1,0 +1,23 @@
+{
+  "name": "gosuslugi-chatbot",
+  "version": "0.0.1",
+  "description": "NodeJS package for interacting with a chat bot on the site Gosuslugi.ru",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/misqlight/gosuslugi-chatbot.git"
+  },
+  "keywords": [
+    "gosuslugi",
+    "chatbot"
+  ],
+  "author": "misqlight",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/misqlight/gosuslugi-chatbot/issues"
+  },
+  "homepage": "https://github.com/misqlight/gosuslugi-chatbot#readme"
+}
