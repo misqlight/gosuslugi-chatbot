@@ -97,9 +97,9 @@ class Chatbot extends EventEmitter {
      */
     _processIncoming(msg) {
         const code = parseInt(msg.match(/^\d+/)[0]);
-        if (msg.length > code.length)
-            var data = JSON.parse(msg.slice(code.length));
-        
+        if (msg.length > code.toString().length)
+            var data = JSON.parse(msg.slice(code.toString().length));
+
         this.emit('message', code, data, msg);
         
         switch (code) {
