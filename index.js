@@ -2,11 +2,15 @@ const EventEmitter = require('node:events');
 const http = require('https');
 const WebSocket = require('ws');
 
-function generateString(length, symbols = '0123456789abcdef') {
-    let result = '';
-    for (let i = 0; i < length; i++)
-        result += symbols[Math.floor(Math.random() * symbols.length)];
-    return result;
+function generateUUID() {
+    function generateString(length, symbols = '0123456789abcdef') {
+        let result = '';
+        for (let i = 0; i < length; i++)
+            result += symbols[Math.floor(Math.random() * symbols.length)];
+        return result;
+    }
+
+    return [generateString(8), generateString(4), '4' + generateString(3), generateString(1, '89ab') + generateString(3), generateString(12)].join('-');
 }
 
 /**
@@ -65,7 +69,7 @@ class Chatbot extends EventEmitter {
      */
     async _init(sessionId, platform = "epgu_desc") {
         if (!/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$/.test(sessionId))
-            sessionId = [generateString(8), generateString(4), '4' + generateString(3), generateString(1, '89ab') + generateString(3), generateString(12)].join('-');
+            sessionId = generateUUID();
 
         return new Promise((resolve, reject) => {
             const request = http.request({
@@ -121,7 +125,7 @@ class Chatbot extends EventEmitter {
      */
     async hello() {
         return new Promise((resolve, reject) => {
-            const uuid = [generateString(8), generateString(4), '4' + generateString(3), generateString(1, '89ab') + generateString(3), generateString(12)].join('-');
+            const uuid = generateUUID();
             
             this.ws.send('42' + JSON.stringify(["hello_broker", { action: "hello_broker", uuid }]));
 
