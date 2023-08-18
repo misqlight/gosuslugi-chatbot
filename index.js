@@ -26,7 +26,7 @@ class Chatbot extends EventEmitter {
 
     /**
      * @public
-     * @param {"connect"|"close"|"login"} eventName - Event name to listen
+     * @param {"connect"|"close"|"login"|"ping"} eventName - Event name to listen
      * @param {ChatbotListener} listener
      */
     addListener(eventName, listener) {
@@ -35,7 +35,7 @@ class Chatbot extends EventEmitter {
 
     /**
      * @public
-     * @param {"connect"|"close"|"login"} eventName - Event name to listen
+     * @param {"connect"|"close"|"login"|"ping"} eventName - Event name to listen
      * @param {ChatbotListener} listener
      */
     on(eventName, listener) {
@@ -82,7 +82,20 @@ class Chatbot extends EventEmitter {
      * @returns {void}
      */
     _processIncoming(msg) {
-        // TODO
+        const code = parseInt(msg.match(/^\d+/)[0]);
+        if (msg.length > code.length)
+            var data = JSON.parse(msg.slice(code.length));
+        
+        switch (code) {
+            case 0: // Authorization request
+                this.ws.send('40' + JSON.stringify({ token: this.token }))
+                this.emit('login', this);
+                break;
+            case 2: // Ping!
+                this.emit('ping', this);
+                this.ws.send('3'); // Pong!
+                break;
+        }
     }
 
     /**
