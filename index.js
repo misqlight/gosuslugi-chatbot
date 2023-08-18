@@ -14,6 +14,20 @@ function generateString(length, symbols = '0123456789abcdef') {
  * @param {Chatbot} chatbot
 */
 
+/** 
+ * @typedef {object} AnswerButton
+ * @property {string} label - Label
+ * @property {URL|null} link - Button target link 
+ */
+
+/** 
+ * @typedef {object} ChatbotMessage
+ * @property {string} action - Message action
+ * @property {string} content - HTML code of the message content
+ * @property {string|null} header
+ * @property {AnswerButton[]} buttons - Answer buttons
+ */
+
 class Chatbot extends EventEmitter {
     /** @type {WebSocket} ws */
     ws;
@@ -86,6 +100,8 @@ class Chatbot extends EventEmitter {
         if (msg.length > code.length)
             var data = JSON.parse(msg.slice(code.length));
         
+        this.emit('message', code, data, msg);
+        
         switch (code) {
             case 0: // Authorization request
                 this.ws.send('40' + JSON.stringify({ token: this.token }))
@@ -96,6 +112,35 @@ class Chatbot extends EventEmitter {
                 this.ws.send('3'); // Pong!
                 break;
         }
+    }
+
+    /**
+     * Say hello to the bot and return the answer
+     * @public
+     * @returns {Promise<ChatbotMessage>}
+     */
+    async hello() {
+        return new Promise((resolve, reject) => {
+            const uuid = [generateString(8), generateString(4), '4' + generateString(3), generateString(1, '89ab') + generateString(3), generateString(12)].join('-');
+            
+            this.ws.send('42' + JSON.stringify(["hello_broker", { action: "hello_broker", uuid }]));
+
+            const listener = (code, data) => {
+                if (code !== 42 || data?.[0] !== 'hello_user' || data?.[1]?.uuid !== uuid) return;
+                this.off('message', listener);
+                resolve({
+                    action: data[0],
+                    buttons: data[1].data.message?.result?.outside?.filter(r => r.type === 'button')?.map(btn => { return {
+                        label: btn.label,
+                        link: btn.link ? new URL(btn.link) : btn.link
+                    }}) ?? [],
+                    content: data[1].data.message.content,
+                    header: data[1].data.message.header,
+                });
+            };
+
+            this.on('message', listener);
+        });
     }
 
     /**
