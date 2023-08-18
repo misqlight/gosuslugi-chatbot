@@ -1,3 +1,4 @@
+const EventEmitter = require('node:events');
 const http = require('https');
 const WebSocket = require('ws');
 
@@ -8,14 +9,38 @@ function generateString(length, symbols = '0123456789abcdef') {
     return result;
 }
 
-class Chatbot {
+/**
+ * @callback ChatbotListener
+ * @param {Chatbot} chatbot
+*/
+
+class Chatbot extends EventEmitter {
     /** @type {WebSocket} ws */
     ws;
+
     /**
      * API token
      * @type {string} token
      */
     token;
+
+    /**
+     * @public
+     * @param {"connect"|"close"|"login"} eventName - Event name to listen
+     * @param {ChatbotListener} listener
+     */
+    addListener(eventName, listener) {
+        super.addListener(eventName, listener)
+    }
+
+    /**
+     * @public
+     * @param {"connect"|"close"|"login"} eventName - Event name to listen
+     * @param {ChatbotListener} listener
+     */
+    on(eventName, listener) {
+        super.addListener(eventName, listener)
+    }
 
     /** 
      * Initialize API and get API token
@@ -66,8 +91,11 @@ class Chatbot {
      * @returns {void}
      */
     close() {
+        this.ws.on('close', () => {
+            this.emit('close', this);
+            this.ws = undefined;
+        });
         this.ws.close();
-        this.ws = undefined;
     }
 
     /**
@@ -81,7 +109,11 @@ class Chatbot {
             this._init();
             this.ws = new WebSocket(address);
             this.ws.on('message', data => this._processIncoming(data.toString()));
-            this.ws.on('close', this.close);
+            this.ws.on('close', () => {
+                this.emit('close', this);
+                this.ws = undefined;
+            });
+            this.ws.on('open', () => this.emit('connect', this));
         }
     }
 }
