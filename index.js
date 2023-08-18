@@ -104,10 +104,6 @@ class Chatbot extends EventEmitter {
      * @returns {void}
      */
     close() {
-        this.ws.on('close', () => {
-            this.emit('close', this);
-            this.ws = undefined;
-        });
         this.ws.close();
     }
 
