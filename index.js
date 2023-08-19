@@ -148,6 +148,36 @@ class Chatbot extends EventEmitter {
     }
 
     /**
+     * Send message to the bot and return the answer
+     * @public
+     * @param {string} text - Text to send
+     * @returns {Promise<ChatbotMessage>}
+     */
+    async say(text) {
+        return new Promise((resolve, reject) => {
+            const uuid = generateUUID();
+
+            this.ws.send('42' + JSON.stringify(["search_request", { action: "search_request", uuid, data: { query: { text, inputType: 'enter' } } }]));
+
+            const listener = (code, data) => {
+                if (code !== 42 || data?.[0] !== 'search_response' || data?.[1]?.uuid !== uuid) return;
+                this.off('message', listener);
+                resolve({
+                    action: data[0],
+                    buttons: data[1].data.message?.result?.outside?.filter(r => r.type === 'button')?.map(btn => { return {
+                        label: btn.label,
+                        link: btn.link ? new URL(btn.link) : btn.link
+                    }}) ?? [],
+                    content: data[1].data.message.content,
+                    header: data[1].data.message.header,
+                });
+            };
+
+            this.on('message', listener);
+        });
+    }
+    
+    /**
      * Close the connection
      * @public
      * @returns {void}
