@@ -19,17 +19,21 @@ function generateUUID() {
 */
 
 /** 
- * @typedef {object} AnswerButton
+ * @typedef {object} AnswerResult
+ * @property {"button"|"link"|"moreResults"|"noMisprint"} type - Type of the result
  * @property {string} label - Label
  * @property {URL|null} link - Button target link 
+ * @property {URL|null} image - Image URL
  */
 
 /** 
  * @typedef {object} ChatbotMessage
  * @property {string} action - Message action
  * @property {string} content - HTML code of the message content
- * @property {string|null} header
- * @property {AnswerButton[]} buttons - Answer buttons
+ * @property {string|null} header - Message header
+ * @property {Object} results - Answer results
+ * @property {AnswerResult[]} results.inside - Results inside the message
+ * @property {AnswerResult[]} results.outside - Results outside the message
  */
 
 class Chatbot extends EventEmitter {
@@ -134,12 +138,26 @@ class Chatbot extends EventEmitter {
                 this.off('message', listener);
                 resolve({
                     action: data[0],
-                    buttons: data[1].data.message?.result?.outside?.filter(r => r.type === 'button')?.map(btn => { return {
-                        label: btn.label,
-                        link: btn.link ? new URL(btn.link) : btn.link
-                    }}) ?? [],
                     content: data[1].data.message.content,
                     header: data[1].data.message.header,
+                    results: {
+                        inside: data[1].data.message?.result?.inside?.map(res => {
+                            return {
+                                type: res.type,
+                                label: res.label,
+                                link: res.link ? new URL(res.link) : res.link,
+                                image: res.image ? new URL(res.image) : res.image,
+                            }
+                        }) ?? [],
+                        outside: data[1].data.message?.result?.outside?.map(res => {
+                            return {
+                                type: res.type,
+                                label: res.label,
+                                link: res.link ? new URL(res.link) : res.link,
+                                image: res.image ? new URL(res.image) : res.image,
+                            }
+                        }) ?? [],
+                    }
                 });
             };
 
@@ -164,19 +182,33 @@ class Chatbot extends EventEmitter {
                 this.off('message', listener);
                 resolve({
                     action: data[0],
-                    buttons: data[1].data.message?.result?.outside?.filter(r => r.type === 'button')?.map(btn => { return {
-                        label: btn.label,
-                        link: btn.link ? new URL(btn.link) : btn.link
-                    }}) ?? [],
                     content: data[1].data.message.content,
                     header: data[1].data.message.header,
+                    results: {
+                        inside: data[1].data.message?.result?.inside?.map(res => {
+                            return {
+                                type: res.type,
+                                label: res.label,
+                                link: res.link ? new URL(res.link) : res.link,
+                                image: res.image ? new URL(res.image) : res.image,
+                            }
+                        }) ?? [],
+                        outside: data[1].data.message?.result?.outside?.map(res => {
+                            return {
+                                type: res.type,
+                                label: res.label,
+                                link: res.link ? new URL(res.link) : res.link,
+                                image: res.image ? new URL(res.image) : res.image,
+                            }
+                        }) ?? [],
+                    }
                 });
             };
 
             this.on('message', listener);
         });
     }
-    
+
     /**
      * Close the connection
      * @public
