@@ -1,8 +1,5 @@
-# Unofficial API for the chat from [gosuslugi.ru](https://gosuslugi.ru/)
-![gosuslugi.ru chat](https://i.ibb.co/VM7mmRt/image.png)
-![gosuslugi.ru chat](https://i.ibb.co/7KLxsrx/image.png)
-
-
+# Introduction
+This is package that provides unofficial API for the chat from [gosuslugi.ru](https://gosuslugi.ru/)
 
 # Usage
 To connect you should create new `Chatbot` object:
