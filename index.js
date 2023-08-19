@@ -28,6 +28,7 @@ function generateUUID() {
 
 /** 
  * @typedef {object} ChatbotMessage
+ * @property {string} uuid - Unique ID of the message
  * @property {string} action - Message action
  * @property {string} content - HTML code of the message content
  * @property {string|null} header - Message header
@@ -137,6 +138,7 @@ class Chatbot extends EventEmitter {
                 if (code !== 42 || data?.[0] !== 'hello_user' || data?.[1]?.uuid !== uuid) return;
                 this.off('message', listener);
                 resolve({
+                    uuid,
                     action: data[0],
                     content: data[1].data.message.content,
                     header: data[1].data.message.header,
@@ -181,6 +183,7 @@ class Chatbot extends EventEmitter {
                 if (code !== 42 || data?.[0] !== 'search_response' || data?.[1]?.uuid !== uuid) return;
                 this.off('message', listener);
                 resolve({
+                    uuid,
                     action: data[0],
                     content: data[1].data.message.content,
                     header: data[1].data.message.header,
