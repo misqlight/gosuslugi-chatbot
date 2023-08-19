@@ -1,6 +1,6 @@
 {
   "name": "gosuslugi-chatbot",
-  "version": "0.3",
+  "version": "0.3.0",
   "description": "NodeJS package for interacting with a chat bot on the site Gosuslugi.ru",
   "main": "index.js",
   "scripts": {
