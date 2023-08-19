@@ -10,7 +10,13 @@ function generateUUID() {
         return result;
     }
 
-    return [generateString(8), generateString(4), '4' + generateString(3), generateString(1, '89ab') + generateString(3), generateString(12)].join('-');
+    return [
+        ('0000000' + Date.now().toString(16)).slice(-8), // Get the last 8 digits of the current timestamp in hex to make the UUID more unique
+        generateString(4),
+        '4' + generateString(3),
+        generateString(1, '89ab') + generateString(3),
+        generateString(12)
+    ].join('-');
 }
 
 /**
