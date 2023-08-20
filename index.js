@@ -26,7 +26,7 @@ function generateUUID() {
 
 /** 
  * @typedef {object} AnswerResult
- * @property {"button"|"link"|"moreResults"|"noMisprint"} type - Type of the result
+ * @property {"button"|"link"|"moreResults"|"noMisprint"|"query"|null} type - Type of the result
  * @property {string} label - Label
  * @property {URL|null} link - Button target link 
  * @property {URL|null} image - Image URL
