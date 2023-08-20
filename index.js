@@ -32,11 +32,19 @@ function generateUUID() {
  * @property {URL|null} image - Image URL
  */
 
+/**
+ * @typedef {Clarification}
+ * @property {string} id - Clarification ID
+ * @property {string} label - Clarification label
+ * @property {string} content - Clarification content
+ */
+
 /** 
  * @typedef {object} ChatbotMessage
  * @property {string} uuid - Unique ID of the message
  * @property {string} action - Message action
  * @property {string} content - HTML code of the message content
+ * @property {Clarification[]} clarifications - Message clarifications
  * @property {string|null} header - Message header
  * @property {Object} results - Answer results
  * @property {AnswerResult[]} results.inside - Results inside the message
@@ -165,7 +173,8 @@ class Chatbot extends EventEmitter {
                                 image: res.image ? new URL(res.image) : res.image,
                             }
                         }) ?? [],
-                    }
+                    },
+                    clarifications: data[1].data.message?.clarifications ?? []
                 });
             };
 
@@ -210,7 +219,8 @@ class Chatbot extends EventEmitter {
                                 image: res.image ? new URL(res.image) : res.image,
                             }
                         }) ?? [],
-                    }
+                    },
+                    clarifications: data[1].data.message?.clarifications ?? []
                 });
             };
 
