@@ -231,19 +231,24 @@ class Chatbot extends EventEmitter {
      * Connect to the WebSocket Server
      * @public
      * @param {string|URL} [address] - Address to connect
-     * @returns {void}
+     * @returns {Promise<Chatbot>}
      */
-    connect(address = "wss://bot.gosuslugi.ru/api/v2/ws/socket.io/?EIO=4&transport=websocket") {
-        if (!this.ws) {
-            this._init();
-            this.ws = new WebSocket(address);
-            this.ws.on('message', data => this._processIncoming(data.toString()));
-            this.ws.on('close', () => {
-                this.emit('close', this);
-                this.ws = undefined;
-            });
-            this.ws.on('open', () => this.emit('connect', this));
-        }
+    async connect(address = "wss://bot.gosuslugi.ru/api/v2/ws/socket.io/?EIO=4&transport=websocket") {
+        return new Promise((resolve, reject) => {
+            if (!this.ws) {
+                this._init();
+                this.ws = new WebSocket(address);
+                this.ws.on('message', data => this._processIncoming(data.toString()));
+                this.ws.on('close', () => {
+                    this.emit('close', this);
+                    this.ws = undefined;
+                });
+                this.ws.on('open', () => {
+                    this.emit('connect', this)
+                    resolve(this);
+                });
+            }
+        });
     }
 }
 
